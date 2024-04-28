@@ -143,13 +143,13 @@ def save_image(img,img_name):
         return 0
 
 # 图片名称需要唯一
-def process_image(image_name):
-    new_image_name = str(idgen.get_id())+'.'+image_name.split('.')[-1]
-    image_path = os.path.join(settings.MEDIA_ROOT, image_name)
-    segments,palette_dict = seg_img.prefict(image_path,new_image_name)
-    print("===处理")
-    return new_image_name,segments,palette_dict
-    pass
+# def process_image(image_name):
+#     new_image_name = str(idgen.get_id())+'.'+image_name.split('.')[-1]
+#     image_path = os.path.join(settings.MEDIA_ROOT, image_name)
+#     segments,palette_dict = seg_img.prefict(image_path,new_image_name)
+#     print("===处理")
+#     return new_image_name,segments,palette_dict
+#     pass
 
 @csrf_exempt
 def upload_video(request):

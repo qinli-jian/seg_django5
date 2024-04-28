@@ -26,7 +26,9 @@ from mmseg.apis import init_model, inference_model, show_result_pyplot
 import mmcv
 import cv2
 
+from seg_app.utils import dfs_account_dui
 from seg_django_5 import settings
+
 
 class SegImg:
     def __init__(self,config,checkpoint):
@@ -53,6 +55,20 @@ class SegImg:
         self.opacity = 0.5 # 透明度
         print("===初始化结束===")
 
+    '''
+    统计病害数量（小堆的数量）
+    '''
+    def count_dui(self,mask):
+        mask = np.where(mask != 0, 1, 0)
+        num_el = mask.size
+        sizes, starts = dfs_account_dui.analyze_clusters_with_positions(mask)
+        label_attribute = {}
+        for size, start in zip(sizes, starts):
+            label_attribute["pixel_size"] = size
+            label_attribute["attribute"] = size/num_el
+            label_attribute["position"] = start
+        return label_attribute
+
     def prefict(self,img_path,new_image_name):
         img_bgr = cv2.imread(img_path)
         result = inference_model(self.model, img_bgr)
@@ -74,6 +90,10 @@ class SegImg:
             csv_name = new_image_name.split('.')[0]+'_'+str(label)+'.csv'
             item['label_mask_csv'] = csv_name
             np.savetxt(os.path.join(settings.CSV_OUT_PATH,csv_name), mask, delimiter=",")
+
+            label_attribute = self.count_dui(mask)
+            item["label_attribute"] = label_attribute
+
             # color_mask[np.where(pred_mask == label)] = self.palette_dict[label]
             # color_mask_gpu = torch.tensor(color_mask, device='cuda')
             # item['color_mask'] = copy.deepcopy(color_mask.tolist())
