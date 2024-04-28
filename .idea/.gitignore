@@ -1,0 +1,9 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Datasource local storage ignored files
+/../../../../../../:\作业文件\毕业设计\毕业设计论文代码数据\seg_django_5\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+..\seg_app\weight\best_mIoU_iter_90000.pth

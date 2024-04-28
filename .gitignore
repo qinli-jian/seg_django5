@@ -1,0 +1,10 @@
+log\*
+!log\.gitkeep
+
+media\*
+!media\.gitkeep
+
+media\output\*
+!media\output\.gitkeep
+
+seg_app\weight\*

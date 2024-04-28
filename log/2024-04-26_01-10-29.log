@@ -1,0 +1,6 @@
+2024-04-26 01:10:34,330 - DEBUG - matplotlib data path: E:\anaconda\envs\seg_py10\lib\site-packages\matplotlib\mpl-data
+2024-04-26 01:10:34,376 - DEBUG - CONFIGDIR=C:\Users\qinlinjian\.matplotlib
+2024-04-26 01:10:34,379 - DEBUG - interactive is False
+2024-04-26 01:10:34,379 - DEBUG - platform is win32
+2024-04-26 01:10:34,848 - DEBUG - CACHEDIR=C:\Users\qinlinjian\.matplotlib
+2024-04-26 01:10:34,853 - DEBUG - Using fontManager instance from C:\Users\qinlinjian\.matplotlib\fontlist-v330.json
