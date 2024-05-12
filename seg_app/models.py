@@ -10,6 +10,7 @@ beijing_tz = pytz_timezone('Asia/Shanghai')
 
 class UploadedImage(Document):
     image_name = StringField(max_length=100)  # 使用 StringField 字段保存图片名称
+    depthimg_name = StringField(max_length=100,default="") # 可以缺省 new
     uploaded_at = DateTimeField(default=timezone.now().astimezone(beijing_tz))  # 使用 DateTimeField 字段保存上传时间
     processed_image_name = StringField(max_length=100)
     palette_dict = DictField()

@@ -104,13 +104,17 @@ def read_matrix_from_csv(file_path):
     return matrix
 
 
-
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    file_path = r'E:\homework_file\bishe\bs_paper_code_datas\seg_django_5\media\output\1783544751958659072_2.csv'
+    file_path = r'E:\homework_file\bishe\bs_paper_code_datas\seg_django_5\media\output\1783544751958659072_1.csv'
     matrix = read_matrix_from_csv(file_path)
     num_elements = matrix.size
     # 运行函数
     sizes, starts = analyze_clusters_with_positions(matrix)
     for size, start in zip(sizes, starts):
         print(f"Cluster size: {size}, proportion: {size/num_elements*100}%, Start position: {start}")
+
+    plt.imshow(matrix, cmap='Greys', interpolation='none')
+    plt.colorbar()  # 可以添加颜色条来指示True和False
+    plt.show()

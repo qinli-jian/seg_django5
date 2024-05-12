@@ -11,9 +11,9 @@ import numpy as np
 from skimage import morphology,feature, draw
 # from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-from crack_analysis.DSE_prune import *
-from crack_analysis.intersection_remover import *
-from crack_analysis.rasterizing import *
+from .DSE_prune import *
+from .intersection_remover import *
+from .rasterizing import *
 import csv 
 from random import sample
 
@@ -287,7 +287,7 @@ def get_width(pois,dt,bin_img,S,B,b,verbose = False,visualize=False):
     pt1 = pt_arr[max_index][0]
     pt2 = pt_arr[max_index][1]
     
-    color = (255,0,0) # Line color
+    color = (0,0,255) # Line color
     start_pt = (pt1[1],pt1[0]) 
     end_pt = (pt2[1],pt2[0]) # points used in the library are inverted
     img = cv2.line(img,start_pt,end_pt,color,2)   
@@ -296,7 +296,7 @@ def get_width(pois,dt,bin_img,S,B,b,verbose = False,visualize=False):
     plt.figure(figsize=(20,20))
     # plt.imshow(img)
     plt.axis(False)
-    return dist_arr, img
+    return dist_arr, img, pt_arr
 
 
 # In[7]:
@@ -501,40 +501,43 @@ def crack_analysis(binray_image_matrix):
 
     # distance_op,distance_img = op_method(S_2,dist,test_img_r,skeleton_img_r,canny,ori_B,verbose=False,visualize=True)
     # 得到的是像素的距离
-    distance_hybrid, distance_img = get_width(S_2, dist, test_img_r, skeleton_img_r, canny, ori_B, verbose=False,
+    distance_hybrid, distance_img, pt_arr = get_width(S_2, dist, test_img_r, skeleton_img_r, canny, ori_B, verbose=False,
                                               visualize=True)
     # distance,distance_img = shortest_method(S_2,dist,test_img_r,skeleton_img_r,canny,ori_B,verbose=False,visualize=True)
 
     # print(distance_hybrid, distance_img)
-    print("平均宽度：", np.average(distance_hybrid))
-    print("最小宽度：", np.min(distance_hybrid))
-    print("最大宽度：", np.max(distance_hybrid))
+    # print("平均宽度：", np.average(distance_hybrid))
+    # print("最小宽度：", np.min(distance_hybrid))
+    # print("最大宽度：", np.max(distance_hybrid))
+    # print("中位数：",np.median(distance_hybrid))
     # print(np.sum(distance_img))
     # plt.imshow(distance_img)
     # plt.show()
     aver_width = np.average(distance_hybrid)
     min_width = np.min(distance_hybrid)
     max_width = np.max(distance_hybrid)
-    return (aver_width,min_width,max_width,distance_img)
+    median_width = np.median(distance_hybrid)
+    return (aver_width,min_width,max_width,median_width,distance_img,pt_arr)
 
 if __name__ == "__main__":
+    pass
     # folder_path = "./data_for_crack_width_measurement/field_data"
-    folder_path = "my_test_images"
-    mask_paths = sorted(glob.glob(os.path.join(folder_path,'*png')))
-    mask_files = []
-    for path in mask_paths:
-        mask = cv2.imread(path,cv2.IMREAD_UNCHANGED)
-        mask_files.append(mask)
-
-    # padding 
-    padded_mask = []
-    for mask in mask_files:
-        pad_mask = np.pad(mask,((2,2),(2,2)),"constant")
-        padded_mask.append(pad_mask)
-    
-    test_img = padded_mask[0]
-    aver_width,min_width,max_width,distance_img = crack_analysis(test_img)
-    print(aver_width,min_width,max_width,distance_img)
+    # folder_path = "my_test_images"
+    # mask_paths = sorted(glob.glob(os.path.join(folder_path,'*png')))
+    # mask_files = []
+    # for path in mask_paths:
+    #     mask = cv2.imread(path,cv2.IMREAD_UNCHANGED)
+    #     mask_files.append(mask)
+    #
+    # # padding
+    # padded_mask = []
+    # for mask in mask_files:
+    #     pad_mask = np.pad(mask,((2,2),(2,2)),"constant")
+    #     padded_mask.append(pad_mask)
+    #
+    # test_img = padded_mask[0]
+    # aver_width,min_width,max_width,distance_img = crack_analysis(test_img)
+    # print(aver_width,min_width,max_width,distance_img)
     # skel,dist = morphology.medial_axis(test_img,return_distance=True)
     # skeleton_img, graph = skel_pruning_DSE(skel, dist,75,return_graph=True)
     # canny = feature.canny(test_img)

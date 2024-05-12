@@ -11,8 +11,8 @@ import numpy as np
 from skimage import morphology,feature
 # from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-from crack_analysis.rasterizing import *
-from crack_analysis.DSE_prune import *
+from seg_app.utils.crack_analysis.rasterizing import *
+from seg_app.utils.crack_analysis.DSE_prune import *
 
 
 # In[28]:
