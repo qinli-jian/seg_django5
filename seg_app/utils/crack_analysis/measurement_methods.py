@@ -283,20 +283,26 @@ def get_width(pois,dt,bin_img,S,B,b,verbose = False,visualize=False):
             img = cv2.line(img,start_pt,end_pt,color,1)   
             
     # Draw maximum line
-    max_index = np.argmax(dist_arr)
-    pt1 = pt_arr[max_index][0]
-    pt2 = pt_arr[max_index][1]
-    
-    color = (0,0,255) # Line color
-    start_pt = (pt1[1],pt1[0]) 
-    end_pt = (pt2[1],pt2[0]) # points used in the library are inverted
-    img = cv2.line(img,start_pt,end_pt,color,2)   
-    
-    
-    plt.figure(figsize=(20,20))
-    # plt.imshow(img)
-    plt.axis(False)
-    return dist_arr, img, pt_arr
+    if len(dist_arr) > 0:
+        max_index = np.argmax(dist_arr)
+        # 继续你的处理逻辑
+        pt1 = pt_arr[max_index][0]
+        pt2 = pt_arr[max_index][1]
+
+        color = (0, 0, 255)  # Line color
+        start_pt = (pt1[1], pt1[0])
+        end_pt = (pt2[1], pt2[0])  # points used in the library are inverted
+        img = cv2.line(img, start_pt, end_pt, color, 2)
+
+        plt.figure(figsize=(20, 20))
+        # plt.imshow(img)
+        plt.axis(False)
+        return dist_arr, img, pt_arr
+    else:
+        pt1 = None
+        pt2 = None
+        return dist_arr, img, pt_arr
+
 
 
 # In[7]:
@@ -513,6 +519,12 @@ def crack_analysis(binray_image_matrix):
     # print(np.sum(distance_img))
     # plt.imshow(distance_img)
     # plt.show()
+    if len(distance_hybrid)==0:
+        aver_width = 0
+        min_width = 0
+        max_width = 0
+        median_width = 0
+        return (aver_width, min_width, max_width, median_width, distance_img, pt_arr)
     aver_width = np.average(distance_hybrid)
     min_width = np.min(distance_hybrid)
     max_width = np.max(distance_hybrid)

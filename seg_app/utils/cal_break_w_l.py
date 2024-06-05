@@ -81,6 +81,7 @@ def break_l_w_analysis(mask_csvpath,save_dir):
     matrix = bin_matrix * 255.0
     aver_width, min_width, max_width, median_width, distance_img,pt_arr = crack_analysis(matrix)
 
+    pt_arr = [[arr.astype(int).tolist() for arr in tup] for tup in pt_arr]
     distance_save_path = os.path.join(save_dir,file_id+"_distance.jpg")
     cv2.imwrite(
         distance_save_path,
@@ -115,6 +116,7 @@ def break_l_w_analysis(mask_csvpath,save_dir):
         "skeleton_img": file_id + "_skeleton.jpg",
         "width_points_array": pt_arr
     }
+    print(pt_arr)
     return measurements
 
 from scipy.spatial.distance import euclidean

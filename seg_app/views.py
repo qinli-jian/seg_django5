@@ -82,8 +82,9 @@ def upload_rgbdCam_img(request):
 @csrf_exempt
 def upload_image(request):
     if request.method == 'POST':
-        image_name = request.FILES.get('image').name  # 获取上传图片的名称
-        # name = request.POST.get("image_name")
+        # image_name = request.FILES.get('image').name  # 获取上传图片的名称
+        image_name = request.POST.get("image_name")
+        print(f"图片名称：{image_name}")
         _ = save_image(request.FILES.get('image'), image_name)
         if _ == 0:
             return JsonResponse({'status': 'error', 'message': 'save error'}, status=500)
@@ -171,40 +172,41 @@ def while_process_imgs():
         else:
             continue
         # 读取mongodb数据库
-        try:
-            img_record = UploadedImage.objects.filter(state=0).order_by("+order_by").first()
-            if img_record: # 还有没有处理的话就处理
-                # 没有上传深度图的图片的处理
-                if hasattr(img_record, "depthimg_name") and (img_record.depthimg_name=="" or img_record.depthimg_name==None) or not hasattr(img_record, "depthimg_name"):
-                    print("******查询处理")
-                    log_info(f"******开始处理查询:{img_record.image_name}******")
-                    new_image_name = idgen.get_id() + '.' + img_record.image_name.split('.')[-1]
-                    segments, palette_dict = seg_img.prefict(os.path.join(settings.MEDIA_ROOT, img_record.image_name),
-                                                             new_image_name)
-                    img_record.segments = segments
-                    img_record.palette_dict = palette_dict
-                    img_record.processed_image_name = new_image_name
-                    img_record.state = 1
-                    img_record.save()
-                    print("******查询处理--结束")
-                    log_info(f"******结束查询处理:{img_record.image_name}******")
+        # try:
+        img_record = UploadedImage.objects.filter(state=0).order_by("+order_by").first()
+        if img_record: # 还有没有处理的话就处理
+            # 没有上传深度图的图片的处理
+            if hasattr(img_record, "depthimg_name") and (img_record.depthimg_name=="" or img_record.depthimg_name==None) or not hasattr(img_record, "depthimg_name"):
+                print("******查询处理")
+                log_info(f"******开始处理查询:{img_record.image_name}******")
+                new_image_name = idgen.get_id() + '.' + img_record.image_name.split('.')[-1]
+                segments, palette_dict = seg_img.prefict(os.path.join(settings.MEDIA_ROOT, img_record.image_name),
+                                                         new_image_name)
+                img_record.segments = segments
+                img_record.palette_dict = palette_dict
+                img_record.processed_image_name = new_image_name
+                img_record.state = 1
+                # print(segments)
+                img_record.save()
+                print("******查询处理--结束")
+                log_info(f"******结束查询处理:{img_record.image_name}******")
 
-                else: # 上传了的深度图的处理
-                    new_image_name = idgen.get_id() + '.' + img_record.image_name.split('.')[-1]
-                    img_path = os.path.join(settings.MEDIA_ROOT, img_record.image_name)
-                    depth_img_path = os.path.join(settings.MEDIA_ROOT, img_record.depthimg_name)
-                    segments, palette_dict = seg_img.predict_AstraCamImg(img_path,new_image_name,depth_img_path)
-                    img_record.segments = segments
-                    img_record.palette_dict = palette_dict
-                    img_record.processed_image_name = new_image_name
-                    img_record.state = 1
-                    img_record.save()
-                    print("******查询处理--结束")
-                    log_info(f"******结束查询处理(结构光相机):{img_record.image_name}******")
+            else: # 上传了的深度图的处理
+                new_image_name = idgen.get_id() + '.' + img_record.image_name.split('.')[-1]
+                img_path = os.path.join(settings.MEDIA_ROOT, img_record.image_name)
+                depth_img_path = os.path.join(settings.MEDIA_ROOT, img_record.depthimg_name)
+                segments, palette_dict = seg_img.predict_AstraCamImg(img_path,new_image_name,depth_img_path)
+                img_record.segments = segments
+                img_record.palette_dict = palette_dict
+                img_record.processed_image_name = new_image_name
+                img_record.state = 1
+                img_record.save()
+                print("******查询处理--结束")
+                log_info(f"******结束查询处理(结构光相机):{img_record.image_name}******")
 
-        except Exception as e:
-            print("处理图片时出错：", e)
-            log_error("处理图片时出错：" + str(e))
+        # except Exception as e:
+        #     print("处理图片时出错：", e)
+        #     log_error("处理图片时出错：" + str(e))
 
 
 def save_image(img,img_name):

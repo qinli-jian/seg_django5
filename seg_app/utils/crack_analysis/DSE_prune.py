@@ -179,7 +179,7 @@ def skel_pruning_DSE(skel, dist, min_area_px=100, return_graph=False):
 
 
 def graph2im(graph, shape):
-    mask = np.zeros(shape, dtype=np.bool)
+    mask = np.zeros(shape, dtype=bool)
     for s,e in graph.edges():
         vals = flatten([[v] for v in graph[s][e].values()])
         for val in vals:

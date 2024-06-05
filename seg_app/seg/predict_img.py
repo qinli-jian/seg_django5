@@ -35,9 +35,8 @@ from seg_django_5 import settings
 
 class SegImg:
     def __init__(self,config,checkpoint):
-        # config = 'configs/knet-s3_swin-t_upernet_8xb2-adamw-80k_ade20k-512x512.py'
         self.config = config
-        # 模型 checkpoint 权重文件'weight/best_mIoU_iter_40000.pth'
+        # 模型 checkpoint 权重文件
         self.checkpoint = checkpoint
         # device = 'cpu'
         # self.device = 'cuda:0'
@@ -66,10 +65,14 @@ class SegImg:
         num_el = mask.size
         sizes, starts = dfs_account_dui.analyze_clusters_with_positions(mask)
         label_attribute = {}
+        label_attribute["pixel_size"] = []
+        label_attribute["attribute"] = []
+        label_attribute["position"] = []
         for size, start in zip(sizes, starts):
-            label_attribute["pixel_size"] = size
-            label_attribute["attribute"] = size/num_el
-            label_attribute["position"] = start
+            label_attribute["pixel_size"].append(int(size))
+            label_attribute["attribute"].append(size/num_el)
+            label_attribute["position"].append(start)
+        label_attribute["label_count"] = len(sizes)
         return label_attribute
 
     def prefict(self,img_path,new_image_name,pixel_size_mm=1):
@@ -98,12 +101,14 @@ class SegImg:
             measurements = {}
             csv_path = os.path.join(settings.CSV_OUT_PATH,csv_name)
             if label==1 or label ==4:
+                # TODO 传入pixel_size_mm估算真实长度和宽度
                 measurements = cal_break_w_l.break_l_w_analysis(csv_path,os.path.join(settings.IMG_SEG_SAVE_PATH))
             else:
+                # TODO 传入pixel_size_mm估算真实面积
                 measurements = cal_break23_area_mm2.get_areas(csv_path,pixel_size_mm)
             item["label_attribute"] = {**label_attribute,**measurements}
 
-            segments.append(copy.deepcopy(item))
+            segments.append(item)
 
         pred_mask_bgr = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3))
         for idx in self.palette_dict.keys():
@@ -113,8 +118,12 @@ class SegImg:
         # 将语义分割预测图和原图叠加显示
         pred_viz = cv2.addWeighted(img_bgr, self.opacity, pred_mask_bgr, 1 - self.opacity, 0)
 
-        # 保存语义分割之后的图片
-        cv2.imwrite(os.path.join(settings.IMG_SEG_SAVE_PATH,new_image_name), pred_viz)
+        try:
+            print(new_image_name)
+            # 保存语义分割之后的图片
+            cv2.imwrite(os.path.join(settings.IMG_SEG_SAVE_PATH,new_image_name), pred_viz)
+        except:
+            print("===写入错误===")
         return segments,self.palette_dict
 
     def predict_AstraCamImg(self,img_path,new_image_name,depth_img_path):

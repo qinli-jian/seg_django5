@@ -23,6 +23,7 @@ from seg_django_5 import settings
 
 def read_matrix_from_csv(file_path):
     # 读取CSV文件
+    print(file_path)
     df = pd.read_csv(file_path)
     # 将所有非零值转换为1，0值保持不变
     matrix = np.where(df != 0, 1, 0)
@@ -40,7 +41,7 @@ def pixel_area(logic_matrix,pixel_size_mm):
     # 使用 regionprops 计算每个区域的面积
     properties = regionprops(labeled_matrix)
     for i,p in enumerate(properties):
-        properties[i]=pixel_to_real_area_mm2(p,pixel_size_mm)
+        properties[i]=pixel_to_real_area_mm2(p.area,pixel_size_mm)
 
     min_pixel_area = min(properties)
     max_pixel_area = max(properties)
@@ -60,7 +61,7 @@ def pixel_to_real_area_mm2(pixel_area,pixel_size_mm):
 返回：min_pixel_area,max_pixel_area,aver_pixel_area,median_pixel_area
 """
 def get_areas(csv_path,pixel_size_mm):
-    logic_matri = read_matrix_from_csv(pixel_size_mm)
+    logic_matri = read_matrix_from_csv(csv_path)
     min_area, max_area, aver_area, median_area = pixel_area(logic_matri,pixel_size_mm)
     measurements = {}
     measurements["min_area"] = min_area

@@ -131,10 +131,11 @@ LOG_PATH = os.path.join(BASE_DIR, 'log')
 
 CSV_OUT_PATH = os.path.join(BASE_DIR, 'media/output')
 
-MODEL_CONFIG = os.path.join(BASE_DIR,r"seg_app/configs/knet-s3_swin-t_upernet_8xb2-adamw-80k_ade20k-512x512.py")
-CHECKPOINT = os.path.join(BASE_DIR,r"seg_app/weight/best_mIoU_iter_90000.pth")
+MODEL_CONFIG = os.path.join(BASE_DIR,r"seg_app/configs/knet-s3_swin-l_upernet_8xb2-adamw-160k_ade20k-512x512.py")
+CHECKPOINT = os.path.join(BASE_DIR,r"seg_app/weight/swin-l_best_mIoU_iter_150000.pth")
 
 ASTRA_CAM_SHAPE = [480, 640]
+# 相机参数
 fx = 582.038
 fy = 582.038
 cx = 318.985
